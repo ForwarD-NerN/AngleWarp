@@ -25,6 +25,7 @@ public class ModConfig implements ConfigData {
     public static class Rendering {
         public float warpPointDistance = 600f;
         public boolean renderProgressBar = true;
+        public boolean useMarkerColorForProgressBar = false;
     }
 
     public static class LerpingOptions {

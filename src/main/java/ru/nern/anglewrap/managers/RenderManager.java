@@ -74,7 +74,7 @@ public class RenderManager {
             drawContext.fill(centerX - BAR_WIDTH / 2, centerY, centerX + BAR_WIDTH / 2, centerY + BAR_HEIGHT, 0xFF555555);
 
             // Progress (green)
-            drawContext.fill(centerX - BAR_WIDTH / 2, centerY, centerX - BAR_WIDTH / 2 + filledWidth, centerY + BAR_HEIGHT, 0xFF00FF00);
+            drawContext.fill(centerX - BAR_WIDTH / 2, centerY, centerX - BAR_WIDTH / 2 + filledWidth, centerY + BAR_HEIGHT, config.rendering.useMarkerColorForProgressBar ? lastWarped.color : 0xFF00FF00);
 
             drawContext.getMatrices().pop();
         }

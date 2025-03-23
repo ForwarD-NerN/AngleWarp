@@ -114,8 +114,6 @@ public class CommandsManager {
     private static int setPostActionPoint(FabricClientCommandSource source, String id, String pointId) throws CommandSyntaxException {
         WarpPoint point = getPointByIdOrThrow(id);
         point.postActionPointId = pointId;
-
-        getPointByIdOrThrow(pointId);
         source.sendFeedback(Text.literal("Point's 2fa was set to " + pointId));
 
         return 1;
