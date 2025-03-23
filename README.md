@@ -1,6 +1,4 @@
-# Angle Warp
-
-## Info
+## *Info*:
 
 **Angle Warp** is a client-side mod that helps aiming at certain points in space, by introducing a rotation-based waypoint system. [[Video Demo](https://www.youtube.com/watch?v=TOV1VCN-nPs)]
 
