@@ -1,16 +1,27 @@
-Client-side fabric mod that is made to simplify interaction with [breeze-ball-based wireless redstone](https://www.youtube.com/watch?v=FnUE-ZaALLw).
-You can check out the demo here: https://www.youtube.com/watch?v=TOV1VCN-nPs
+# Angle Warp
 
-## *How to use*:
-1. New markers can be added with the following command:
+## Info
+
+**Angle Warp** is a client-side mod that helps aiming at certain points in space, by introducing a rotation-based waypoint system. [[Video Demo](https://www.youtube.com/watch?v=TOV1VCN-nPs)]
+
+The primary use-case of this mod is to help teleporting via [arrow deflection-based wireless redstone](https://www.youtube.com/watch?v=FnUE-ZaALLw).
+
+## *Features*:
+* In-game waypoint overlay (can be enabled by holding the R key)
+* Automatic cursor snapping to the nearest waypoint
+* Progress bar that tracks the activation progress
+* Waypoint customization
+* Waypoint linking (used for 2FA)
+
+
+New waypoints can be added with this command:
 ```/anglewarp add_point <point_id> <yaw> <pitch> <warp_ticks>```<br>
-2. Hold down the R key to reveal the markers.<br>
-3. When you move your cursor close to a marker, it will snap to that marker, initiating the warping process. A progress bar will appear below the crosshair, indicating the remaining ticks for the warp.
 
-## 2FA
+
+## *2FA*:
 To set up 2FA, first create a new point with the following command: ```/anglewarp add_point verification_point -56.01 -90.00```<br>
-If you want to keep this point hidden from view, enter this command(optional): ```/anglewarp configure verification_point hide true```
+If you want to make this point hidden for view, activate this command: ```/anglewarp configure verification_point hide true```
 
-You can then configure another point to require 2FA by entering:
+You can then configure another point to use the 2FA point by entering:
 ```/anglewarp configure <point_id> 2fa verification_point```
 
