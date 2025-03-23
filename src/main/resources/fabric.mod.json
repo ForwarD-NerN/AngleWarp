@@ -3,17 +3,16 @@
 	"id": "anglewarp",
 	"version": "${version}",
 	"name": "Angle Warp",
-	"description": "Client-side mod that adds rotation-based waypoints.",
+	"description": "Client-side mod that adds rotation-based waypoints",
 	"authors": [
 		"ForwarD NerN"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/ForwarD-NerN/AngleWarp"
 	},
 	"license": "MIT",
 	"icon": "assets/anglewarp/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
 		"client": [
 			"ru.nern.anglewrap.AngleWarp"
@@ -26,10 +25,11 @@
 		"anglewarp.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.16.10",
+		"fabricloader": ">=0.16.0",
 		"minecraft": "~1.21.4",
 		"java": ">=21",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"cloth-config": "*"
 	},
 	"suggests": {
 		"another-mod": "*"
