@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "ru.nern.anglewrap.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"client": [
+		"MouseMixin"
+	]
+}

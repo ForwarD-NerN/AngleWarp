@@ -1,0 +1,20 @@
+{
+  "key.anglewarp.show_warps": "Show warp points",
+
+  "text.autoconfig.anglewrap.title": "Angle Warp Config",
+  "text.autoconfig.anglewrap.option.snapping": "Snapping",
+
+  "text.autoconfig.anglewrap.option.snapping.snapDistance": "Snap Squared Distance",
+  "text.autoconfig.anglewrap.option.snapping.unsnapDistance": "Release Squared Distance",
+  "text.autoconfig.anglewrap.option.snapping.maxMouseBlockingTicks": "Mouse Input Blocking Ticks",
+
+  "text.autoconfig.anglewrap.option.lerping": "Lerping",
+
+  "text.autoconfig.anglewrap.option.lerping.enableLerping": "Enable Lerping",
+  "text.autoconfig.anglewrap.option.lerping.maxLerpingTicks": "Lerping Ticks",
+
+  "text.autoconfig.anglewrap.option.rendering": "Rendering",
+
+  "text.autoconfig.anglewrap.option.rendering.warpPointDistance": "Warp Point Render Distance",
+  "text.autoconfig.anglewrap.option.rendering.renderProgressBar": "Show Warping Progress Bar"
+}
