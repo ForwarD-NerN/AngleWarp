@@ -1,4 +1,4 @@
-package ru.nern.anglewrap;
+package ru.nern.anglewarp;
 
 import com.google.common.collect.Maps;
 import net.minecraft.util.Util;

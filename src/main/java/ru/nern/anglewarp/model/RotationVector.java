@@ -1,4 +1,4 @@
-package ru.nern.anglewrap.model;
+package ru.nern.anglewarp.model;
 
 import net.minecraft.util.math.Vec2f;
 

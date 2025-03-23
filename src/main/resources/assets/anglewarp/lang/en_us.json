@@ -1,21 +1,21 @@
 {
   "key.anglewarp.show_warps": "Show warp points",
 
-  "text.autoconfig.anglewrap.title": "Angle Warp Config",
-  "text.autoconfig.anglewrap.option.snapping": "Snapping",
+  "text.autoconfig.anglewarp.title": "Angle Warp Config",
+  "text.autoconfig.anglewarp.option.snapping": "Snapping",
 
-  "text.autoconfig.anglewrap.option.snapping.snapDistance": "Snap Squared Distance",
-  "text.autoconfig.anglewrap.option.snapping.unsnapDistance": "Release Squared Distance",
-  "text.autoconfig.anglewrap.option.snapping.maxMouseBlockingTicks": "Mouse Input Blocking Ticks",
+  "text.autoconfig.anglewarp.option.snapping.snapDistance": "Snap Squared Distance",
+  "text.autoconfig.anglewarp.option.snapping.unsnapDistance": "Release Squared Distance",
+  "text.autoconfig.anglewarp.option.snapping.maxMouseBlockingTicks": "Mouse Input Blocking Ticks",
 
-  "text.autoconfig.anglewrap.option.lerping": "Lerping",
+  "text.autoconfig.anglewarp.option.lerping": "Lerping",
 
-  "text.autoconfig.anglewrap.option.lerping.enableLerping": "Enable Lerping",
-  "text.autoconfig.anglewrap.option.lerping.maxLerpingTicks": "Lerping Ticks",
+  "text.autoconfig.anglewarp.option.lerping.enableLerping": "Enable Lerping",
+  "text.autoconfig.anglewarp.option.lerping.maxLerpingTicks": "Lerping Ticks",
 
-  "text.autoconfig.anglewrap.option.rendering": "Rendering",
+  "text.autoconfig.anglewarp.option.rendering": "Rendering",
 
-  "text.autoconfig.anglewrap.option.rendering.warpPointDistance": "Warp Point Render Distance",
-  "text.autoconfig.anglewrap.option.rendering.renderProgressBar": "Show Warping Progress Bar",
-  "text.autoconfig.anglewrap.option.rendering.useMarkerColorForProgressBar": "Use Marker Color For Progress Bar"
+  "text.autoconfig.anglewarp.option.rendering.warpPointDistance": "Warp Point Render Distance",
+  "text.autoconfig.anglewarp.option.rendering.renderProgressBar": "Show Warping Progress Bar",
+  "text.autoconfig.anglewarp.option.rendering.useMarkerColorForProgressBar": "Use Marker Color For Progress Bar"
 }

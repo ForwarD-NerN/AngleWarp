@@ -1,6 +1,4 @@
-package ru.nern.anglewrap.model;
-
-import net.minecraft.util.math.Vec2f;
+package ru.nern.anglewarp.model;
 
 public class WarpPoint {
     public String id;

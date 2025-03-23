@@ -1,10 +1,10 @@
-package ru.nern.anglewrap.config;
+package ru.nern.anglewarp.config;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-@Config(name = "anglewrap")
+@Config(name = "anglewarp")
 public class ModConfig implements ConfigData {
 
     @ConfigEntry.Gui.CollapsibleObject

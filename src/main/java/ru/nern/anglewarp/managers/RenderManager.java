@@ -1,4 +1,4 @@
-package ru.nern.anglewrap.managers;
+package ru.nern.anglewarp.managers;
 
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
@@ -12,10 +12,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import org.joml.Matrix4f;
-import ru.nern.anglewrap.model.WarpPoint;
+import ru.nern.anglewarp.model.WarpPoint;
 
 import static net.minecraft.client.render.RenderPhase.*;
-import static ru.nern.anglewrap.AngleWarp.*;
+import static ru.nern.anglewarp.AngleWarp.*;
 
 public class RenderManager {
     private static final Identifier PROGRESSBAR_LAYER = Identifier.of("anglewarp", "progressbar_layer");

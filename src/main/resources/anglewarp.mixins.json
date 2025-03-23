@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "ru.nern.anglewrap.mixin",
+	"package": "ru.nern.anglewarp.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 	],

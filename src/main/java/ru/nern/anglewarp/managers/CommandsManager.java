@@ -1,4 +1,4 @@
-package ru.nern.anglewrap.managers;
+package ru.nern.anglewarp.managers;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -15,10 +15,10 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
-import ru.nern.anglewrap.AngleWarp;
-import ru.nern.anglewrap.WarpUtils;
-import ru.nern.anglewrap.model.RotationVector;
-import ru.nern.anglewrap.model.WarpPoint;
+import ru.nern.anglewarp.AngleWarp;
+import ru.nern.anglewarp.WarpUtils;
+import ru.nern.anglewarp.model.RotationVector;
+import ru.nern.anglewarp.model.WarpPoint;
 
 import java.text.DecimalFormat;
 

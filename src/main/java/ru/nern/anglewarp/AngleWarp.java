@@ -1,4 +1,4 @@
-package ru.nern.anglewrap;
+package ru.nern.anglewarp;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -11,12 +11,12 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.nern.anglewrap.config.ModConfig;
-import ru.nern.anglewrap.managers.CommandsManager;
-import ru.nern.anglewrap.managers.KeybindsManager;
-import ru.nern.anglewrap.managers.RenderManager;
-import ru.nern.anglewrap.managers.WarpPointManager;
-import ru.nern.anglewrap.model.WarpPoint;
+import ru.nern.anglewarp.config.ModConfig;
+import ru.nern.anglewarp.managers.CommandsManager;
+import ru.nern.anglewarp.managers.KeybindsManager;
+import ru.nern.anglewarp.managers.RenderManager;
+import ru.nern.anglewarp.managers.WarpPointManager;
+import ru.nern.anglewarp.model.WarpPoint;
 
 public class AngleWarp implements ClientModInitializer {
 	public static final String MOD_ID = "anglewarp";

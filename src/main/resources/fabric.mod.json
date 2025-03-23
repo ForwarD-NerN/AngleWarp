@@ -15,10 +15,10 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"ru.nern.anglewrap.AngleWarp"
+			"ru.nern.anglewarp.AngleWarp"
 		],
 		"modmenu": [
-			"ru.nern.anglewrap.config.ModMenuIntegration"
+			"ru.nern.anglewarp.config.ModMenuIntegration"
 		]
 	},
 	"mixins": [

@@ -1,11 +1,11 @@
-package ru.nern.anglewrap.managers;
+package ru.nern.anglewarp.managers;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import ru.nern.anglewrap.AngleWarp;
-import ru.nern.anglewrap.model.WarpPoint;
+import ru.nern.anglewarp.AngleWarp;
+import ru.nern.anglewarp.model.WarpPoint;
 
 import java.io.BufferedReader;
 import java.io.File;
