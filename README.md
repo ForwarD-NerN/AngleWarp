@@ -1,4 +1,4 @@
-Client-side fabric mod that is made to simplify interaction with [breeze-ball-based wireless redstone](https://www.youtube.com/watch?v=X7Ah-SJ0vBc).
+Client-side fabric mod that is made to simplify interaction with [breeze-ball-based wireless redstone](https://www.youtube.com/watch?v=FnUE-ZaALLw).
 You can check out the demo here: https://www.youtube.com/watch?v=TOV1VCN-nPs
 
 ## *How to use*:
