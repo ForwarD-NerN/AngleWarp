@@ -13,6 +13,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import org.joml.Matrix4f;
 import ru.nern.anglewarp.model.WarpPoint;
+import ru.nern.anglewarp.model.WarpPointShape;
 
 import static net.minecraft.client.render.RenderPhase.*;
 import static ru.nern.anglewarp.AngleWarp.*;
@@ -50,7 +51,6 @@ public class RenderManager {
 
                 for(WarpPoint point : WarpPointManager.points) {
                     if(point.hidden) continue;
-
                     renderWarpPoint(point, stack, provider, textBackgroundColor);
                 }
             } else if(currentlySnapped != null && !currentlySnapped.hidden) {
@@ -108,19 +108,37 @@ public class RenderManager {
         VertexConsumer bufferBuilder = provider.getBuffer(WARP_POINT_MARKER_LAYER);
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
 
-        bufferBuilder.vertex(matrix4f, 0, -10, 2.5f).color(point.color);  // Bottom vertex
-        bufferBuilder.vertex(matrix4f, -7.5f, 0, 2.5f).color(point.color); // Left vertex
-        bufferBuilder.vertex(matrix4f, 7.5f, 0, 2.5f).color(point.color);  // Right vertex
-        bufferBuilder.vertex(matrix4f, 0, 10, 2.5f).color(point.color);    // Top vertex
-
+        renderShape(point.shape, point.color, matrix4f, bufferBuilder);
         matrices.translate(0, -25, 0);
-
         drawText(MinecraftClient.getInstance(), point.getDisplayName(), provider, matrix4f, textBackgroundColor);
 
         provider.draw();
 
         matrices.pop();
     }
+
+    private static void renderShape(WarpPointShape shape, int color, Matrix4f matrix4f, VertexConsumer bufferBuilder) {
+        switch (shape) {
+            case SQUARE -> {
+                bufferBuilder.vertex(matrix4f, -7.5f, -7.5f, 2.5f).color(color);  // Bottom-left
+                bufferBuilder.vertex(matrix4f, 7.5f, -7.5f, 2.5f).color(color);   // Bottom-right
+                bufferBuilder.vertex(matrix4f, -7.5f, 7.5f, 2.5f).color(color);   // Top-left
+                bufferBuilder.vertex(matrix4f, 7.5f, 7.5f, 2.5f).color(color);    // Top-right
+            }
+            case TRIANGLE -> {
+                bufferBuilder.vertex(matrix4f, 0, -10, 2.5f).color(color);
+                bufferBuilder.vertex(matrix4f, -8.66f, 5, 2.5f).color(color);
+                bufferBuilder.vertex(matrix4f, 8.66f, 5, 2.5f).color(color);
+            }
+            case null, default -> { // Diamond
+                bufferBuilder.vertex(matrix4f, 0, -10, 2.5f).color(color);
+                bufferBuilder.vertex(matrix4f, -7.5f, 0, 2.5f).color(color);
+                bufferBuilder.vertex(matrix4f, 7.5f, 0, 2.5f).color(color);
+                bufferBuilder.vertex(matrix4f, 0, 10, 2.5f).color(color);
+            }
+        }
+    }
+
 
     public static void drawText(MinecraftClient client, String text, VertexConsumerProvider provider, Matrix4f positionMatrix, int textBackgroundColor) {
         TextRenderer textRenderer = client.textRenderer;

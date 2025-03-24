@@ -71,9 +71,7 @@ public class AngleWarp implements ClientModInitializer {
 	}
 
 	public static void enableMouseLock() {
-		if(isOverlayEnabled) {
-			mouseLocked = true;
-		}
+		if(isOverlayEnabled) mouseLocked = true;
 	}
 
 
