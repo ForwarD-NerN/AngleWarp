@@ -42,9 +42,10 @@ public class RenderManager {
 
     public static void init() {
         WorldRenderEvents.LAST.register(context -> {
+            VertexConsumerProvider.Immediate provider = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers(); // If we use context.consumers().getBuffer() directly here, it will result in shader incompatibility, idk why.
             if(isOverlayEnabled) {
                 int textBackgroundColor = (int)(MinecraftClient.getInstance().options.getTextBackgroundOpacity(0.25F) * 255.0F) << 24;
-                VertexConsumerProvider provider = context.consumers();
+
                 MatrixStack stack = context.matrixStack();
 
                 for(WarpPoint point : WarpPointManager.points) {
@@ -54,7 +55,6 @@ public class RenderManager {
                 }
             } else if(currentlySnapped != null && !currentlySnapped.hidden) {
                 int textBackgroundColor = (int)(MinecraftClient.getInstance().options.getTextBackgroundOpacity(0.25F) * 255.0F) << 24;
-                VertexConsumerProvider provider = context.consumers();
                 MatrixStack stack = context.matrixStack();
                 renderWarpPoint(currentlySnapped, stack, provider, textBackgroundColor);
             }
@@ -86,7 +86,7 @@ public class RenderManager {
 
 
 
-    private static void renderWarpPoint(WarpPoint point, MatrixStack matrices, VertexConsumerProvider provider, int textBackgroundColor) {
+    private static void renderWarpPoint(WarpPoint point, MatrixStack matrices, VertexConsumerProvider.Immediate provider, int textBackgroundColor) {
         matrices.push();
 
         double yawRad = Math.toRadians(point.rotation.y);
@@ -117,7 +117,7 @@ public class RenderManager {
 
         drawText(MinecraftClient.getInstance(), point.getDisplayName(), provider, matrix4f, textBackgroundColor);
 
-        //provider.draw();
+        provider.draw();
 
         matrices.pop();
     }
