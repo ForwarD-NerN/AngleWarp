@@ -74,7 +74,7 @@ public class CommandsManager {
                                         .then(ClientCommandManager.literal("angles").then(ClientCommandManager.argument("angles", CRotationArgument.rotation()).suggests(ANGLE_SUGGESTION_PROVIDER).executes(context -> setPointAngles(context.getSource(), StringArgumentType.getString(context, "id"), CRotationArgument.getRotation(context, "angles")))))
                                         .then(ClientCommandManager.literal("color")
                                                 .then(ClientCommandManager.literal("hex").then(ClientCommandManager.argument("hex", StringArgumentType.string()).executes(context -> setPointColor(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "hex")))))
-                                                .then(ClientCommandManager.argument("color_name", StringArgumentType.string()).suggests(COLORS_SUGGESTION_PROVIDER))
+                                                .then(ClientCommandManager.argument("color_name", StringArgumentType.string()).suggests(COLORS_SUGGESTION_PROVIDER).executes(context -> setPointColor(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "color_name"))))
                                         )
                                 )
                         )
