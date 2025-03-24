@@ -64,10 +64,7 @@ public class AngleWarp implements ClientModInitializer {
 				getSnapper().stopSnapping();
 			}
 		});
-		/*
-		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> WarpPointManager.savePoints());
-		ClientLifecycleEvents.CLIENT_STARTED.register(client -> WarpPointManager.loadPoints());
-		 */
+
 		ClientPlayConnectionEvents.JOIN.register((clientPlayNetworkHandler, packetSender, client) -> {
 			if(config.saving.useGlobalStorage) {
 				warpPointManager = new WarpPointManager.Global();

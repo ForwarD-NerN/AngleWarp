@@ -1,5 +1,6 @@
 package ru.nern.anglewarp.managers;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -30,11 +31,11 @@ public class RenderManager {
             VertexFormat.DrawMode.TRIANGLE_STRIP,
             1536,
             false,
-            true,
+            false,
             RenderLayer.MultiPhaseParameters.builder()
                     .program(POSITION_COLOR_PROGRAM)
                     .transparency(NO_TRANSPARENCY)
-                    .cull(DISABLE_CULLING)
+                    //.cull(DISABLE_CULLING)
                     .depthTest(ALWAYS_DEPTH_TEST)
                     .writeMaskState(COLOR_MASK)
                     .build(false)
@@ -43,7 +44,8 @@ public class RenderManager {
 
     public static void init() {
         WorldRenderEvents.LAST.register(context -> {
-            VertexConsumerProvider.Immediate provider = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers(); // If we use context.consumers().getBuffer() directly here, it will result in shader incompatibility, idk why.
+            VertexConsumerProvider.Immediate provider = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+            //VertexConsumerProvider.I provider = context.consumers();
             if(isOverlayEnabled) {
                 int textBackgroundColor = (int)(MinecraftClient.getInstance().options.getTextBackgroundOpacity(0.25F) * 255.0F) << 24;
 
@@ -87,6 +89,9 @@ public class RenderManager {
 
 
     private static void renderWarpPoint(WarpPoint point, MatrixStack matrices, VertexConsumerProvider.Immediate provider, int textBackgroundColor) {
+
+        RenderSystem.disableDepthTest(); // So for some reason litematica messes up with depth testing and this is needed despite depth testing being disabled in the render layer.
+
         matrices.push();
 
         double yawRad = Math.toRadians(point.rotation.y);
@@ -97,24 +102,28 @@ public class RenderManager {
         double dy = -Math.sin(pitchRad);
         double dz = Math.cos(yawRad) * cosPitch;
 
-        float warpPointDistance = config.rendering.warpPointDistance;
-        matrices.translate(dx * warpPointDistance, dy * warpPointDistance, dz * warpPointDistance);
+        float distance = config.rendering.warpPointDistance;
+        matrices.translate(dx * distance, dy * distance, dz * distance);
 
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-point.rotation.y));
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(point.rotation.x));
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180));
 
-        // Rendering warp point diamond
         VertexConsumer bufferBuilder = provider.getBuffer(WARP_POINT_MARKER_LAYER);
+
+
+
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
 
         renderShape(point.shape, point.color, matrix4f, bufferBuilder);
         matrices.translate(0, -25, 0);
         drawText(MinecraftClient.getInstance(), point.getDisplayName(), provider, matrix4f, textBackgroundColor);
 
+
         provider.draw();
 
         matrices.pop();
+        RenderSystem.enableDepthTest();
     }
 
     private static void renderShape(WarpPointShape shape, int color, Matrix4f matrix4f, VertexConsumer bufferBuilder) {
