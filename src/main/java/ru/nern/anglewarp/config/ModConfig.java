@@ -3,9 +3,13 @@ package ru.nern.anglewarp.config;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import ru.nern.anglewarp.cursor_snap.CursorSnapper;
 
 @Config(name = "anglewarp")
 public class ModConfig implements ConfigData {
+
+    @ConfigEntry.Gui.CollapsibleObject
+    public ActivationOptions activation = new ActivationOptions();
 
     @ConfigEntry.Gui.CollapsibleObject
     public SnappingOptions snapping = new SnappingOptions();
@@ -16,9 +20,13 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Gui.CollapsibleObject
     public Rendering rendering = new Rendering();
 
+    public static class ActivationOptions {
+        public float activationDistance = 0.1f;
+    }
+
     public static class SnappingOptions {
+        public boolean enableSnapping = true;
         public float snapDistance = 12f;
-        public float unsnapDistance = 15;
         public int maxMouseBlockingTicks = 10;
     }
 
@@ -35,12 +43,14 @@ public class ModConfig implements ConfigData {
 
     @Override
     public void validatePostLoad() {
+        activation.activationDistance = Math.max(activation.activationDistance, 0);
         snapping.snapDistance = Math.max(snapping.snapDistance, 0);
-        snapping.unsnapDistance = Math.max(snapping.unsnapDistance, 0);
+        //snapping.unsnapDistance = Math.max(snapping.unsnapDistance, 0);
         snapping.maxMouseBlockingTicks = Math.max(snapping.maxMouseBlockingTicks, 0);
 
         rendering.warpPointDistance = Math.max(rendering.warpPointDistance, 0);
 
         lerping.maxLerpingTicks = Math.max(lerping.maxLerpingTicks, 0);
+
     }
 }

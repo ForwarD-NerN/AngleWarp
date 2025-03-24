@@ -95,7 +95,7 @@ public class CommandsManager {
 
         source.getPlayer().setYaw(point.rotation.y);
         source.getPlayer().setPitch(point.rotation.x);
-        AngleWarp.lastWarped = point;
+        AngleWarp.currentlySnapped = point;
 
         source.sendFeedback(Text.literal("Looking at '" + id + "'"));
 

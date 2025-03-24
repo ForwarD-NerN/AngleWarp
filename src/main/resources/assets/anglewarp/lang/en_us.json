@@ -2,10 +2,14 @@
   "key.anglewarp.show_warps": "Show warp points",
 
   "text.autoconfig.anglewarp.title": "Angle Warp Config",
+
+  "text.autoconfig.anglewarp.option.activation": "Activation",
+  "text.autoconfig.anglewarp.option.activation.activationDistance": "Activation Squared Distance",
+
   "text.autoconfig.anglewarp.option.snapping": "Snapping",
 
+  "text.autoconfig.anglewarp.option.snapping.enableSnapping": "Enable Snapping",
   "text.autoconfig.anglewarp.option.snapping.snapDistance": "Snap Squared Distance",
-  "text.autoconfig.anglewarp.option.snapping.unsnapDistance": "Release Squared Distance",
   "text.autoconfig.anglewarp.option.snapping.maxMouseBlockingTicks": "Mouse Input Blocking Ticks",
 
   "text.autoconfig.anglewarp.option.lerping": "Lerping",

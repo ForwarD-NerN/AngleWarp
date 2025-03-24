@@ -42,9 +42,9 @@ public class RenderManager {
 
     public static void init() {
         WorldRenderEvents.LAST.register(context -> {
-            if(isWarpingKeyPressed) {
+            if(isOverlayEnabled) {
                 int textBackgroundColor = (int)(MinecraftClient.getInstance().options.getTextBackgroundOpacity(0.25F) * 255.0F) << 24;
-                VertexConsumerProvider.Immediate provider = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+                VertexConsumerProvider provider = context.consumers();
                 MatrixStack stack = context.matrixStack();
 
                 for(WarpPoint point : WarpPointManager.points) {
@@ -52,7 +52,11 @@ public class RenderManager {
 
                     renderWarpPoint(point, stack, provider, textBackgroundColor);
                 }
-
+            } else if(currentlySnapped != null && !currentlySnapped.hidden) {
+                int textBackgroundColor = (int)(MinecraftClient.getInstance().options.getTextBackgroundOpacity(0.25F) * 255.0F) << 24;
+                VertexConsumerProvider provider = context.consumers();
+                MatrixStack stack = context.matrixStack();
+                renderWarpPoint(currentlySnapped, stack, provider, textBackgroundColor);
             }
         });
         HudLayerRegistrationCallback.EVENT.register(layeredDrawer -> layeredDrawer.attachLayerBefore(IdentifiedLayer.CROSSHAIR, PROGRESSBAR_LAYER, RenderManager::renderProgressBar));
@@ -60,13 +64,13 @@ public class RenderManager {
 
 
     private static void renderProgressBar(DrawContext drawContext, RenderTickCounter counter) {
-        if(config.rendering.renderProgressBar && lastWarped != null && warpProgress > 0 && warpProgress <= lastWarped.warpTicks) {
+        if(currentlySnapped != null && config.rendering.renderProgressBar && activationProgress > 0 && activationProgress <= currentlySnapped.warpTicks) {
             int screenWidth = drawContext.getScaledWindowWidth();
             int screenHeight = drawContext.getScaledWindowHeight();
             int centerX = screenWidth / 2;
             int centerY = screenHeight / 2 + 10; // Offset below the crosshair
 
-            int filledWidth = (warpProgress * BAR_WIDTH) / lastWarped.warpTicks;
+            int filledWidth = (activationProgress * BAR_WIDTH) / currentlySnapped.warpTicks;
 
             drawContext.getMatrices().push();
 
@@ -74,7 +78,7 @@ public class RenderManager {
             drawContext.fill(centerX - BAR_WIDTH / 2, centerY, centerX + BAR_WIDTH / 2, centerY + BAR_HEIGHT, 0xFF555555);
 
             // Progress (green)
-            drawContext.fill(centerX - BAR_WIDTH / 2, centerY, centerX - BAR_WIDTH / 2 + filledWidth, centerY + BAR_HEIGHT, config.rendering.useMarkerColorForProgressBar ? lastWarped.color : 0xFF00FF00);
+            drawContext.fill(centerX - BAR_WIDTH / 2, centerY, centerX - BAR_WIDTH / 2 + filledWidth, centerY + BAR_HEIGHT, config.rendering.useMarkerColorForProgressBar ? currentlySnapped.color : 0xFF00FF00);
 
             drawContext.getMatrices().pop();
         }
@@ -82,7 +86,7 @@ public class RenderManager {
 
 
 
-    private static void renderWarpPoint(WarpPoint point, MatrixStack matrices, VertexConsumerProvider.Immediate provider, int textBackgroundColor) {
+    private static void renderWarpPoint(WarpPoint point, MatrixStack matrices, VertexConsumerProvider provider, int textBackgroundColor) {
         matrices.push();
 
         double yawRad = Math.toRadians(point.rotation.y);
@@ -113,7 +117,7 @@ public class RenderManager {
 
         drawText(MinecraftClient.getInstance(), point.getDisplayName(), provider, matrix4f, textBackgroundColor);
 
-        provider.draw();
+        //provider.draw();
 
         matrices.pop();
     }

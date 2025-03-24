@@ -11,6 +11,6 @@ import ru.nern.anglewarp.AngleWarp;
 public class MouseMixin {
     @Inject(method = "updateMouse", at = @At("HEAD"), cancellable = true)
     private void anglewarp$blockMouseMovements(double timeDelta, CallbackInfo ci) {
-        if(AngleWarp.mouseBlocked) ci.cancel();
+        if(AngleWarp.mouseLocked) ci.cancel();
     }
 }
