@@ -122,13 +122,13 @@ public class AngleWarp implements ClientModInitializer {
 		float playerPitch = MathHelper.wrapDegrees(player.getPitch());
 
 		for (WarpPoint point : WarpPointManager.points) {
-			if(point != currentlySnapped && point.canSnap) {
+			if(point != currentlySnapped) {
 				float distance = point.rotation.distanceSquared(playerPitch, playerYaw);
 
 				if(distance <= config.snapping.snapDistance) {
-					snapToPoint(player, point);
+					if(point.canSnap) snapToPoint(player, point);
 					currentlySnapped = point;
-					LOGGER.info("Snapping to {}", point.getDisplayName());
+					LOGGER.debug("Snapping to {}", point.getDisplayName());
 				}
 
 			}

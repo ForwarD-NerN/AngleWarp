@@ -58,8 +58,7 @@ public class WarpPointManager {
             points.addAll(loadedPoints);
             AngleWarp.LOGGER.info("Loaded {} warp points", points.size());
         } catch (Exception e) {
-            AngleWarp.LOGGER.info("Exception occurred during loading of warp points. {}", e.getMessage());
-            e.printStackTrace();
+            AngleWarp.LOGGER.info("Exception occurred during loading of warp points.", e);
         }
     }
 
