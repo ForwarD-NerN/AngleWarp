@@ -49,7 +49,7 @@ public class RenderManager {
 
                 MatrixStack stack = context.matrixStack();
 
-                for(WarpPoint point : WarpPointManager.points) {
+                for(WarpPoint point : warpPointManager.points) {
                     if(point.hidden) continue;
                     renderWarpPoint(point, stack, provider, textBackgroundColor);
                 }

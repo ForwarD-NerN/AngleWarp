@@ -3,12 +3,11 @@ package ru.nern.anglewarp;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
-
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.MathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.nern.anglewarp.config.ModConfig;
@@ -42,6 +41,8 @@ public class AngleWarp implements ClientModInitializer {
 	private static final LerpCursorSnapper lerpSnapper = new LerpCursorSnapper();
 	private static final NoCursorSnapper noSnapper = new NoCursorSnapper();
 
+	public static WarpPointManager warpPointManager;
+
 	@Override
 	public void onInitializeClient() {
 		CommandsManager.init();
@@ -49,7 +50,7 @@ public class AngleWarp implements ClientModInitializer {
 		RenderManager.init();
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if(client.isPaused()) return;
+			if(client.isPaused() || client.player == null) return;
 
 			tickActivationProgress(client.player);
 
@@ -63,8 +64,25 @@ public class AngleWarp implements ClientModInitializer {
 				getSnapper().stopSnapping();
 			}
 		});
+		/*
 		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> WarpPointManager.savePoints());
 		ClientLifecycleEvents.CLIENT_STARTED.register(client -> WarpPointManager.loadPoints());
+		 */
+		ClientPlayConnectionEvents.JOIN.register((clientPlayNetworkHandler, packetSender, client) -> {
+			if(config.saving.useGlobalStorage) {
+				warpPointManager = new WarpPointManager.Global();
+			}else {
+				warpPointManager = client.isIntegratedServerRunning() ?
+						new WarpPointManager.Singleplayer() :
+						new WarpPointManager.Multiplayer(client.getNetworkHandler().getServerInfo());
+			}
+			warpPointManager.loadPoints();
+		});
+
+		ClientPlayConnectionEvents.DISCONNECT.register((clientPlayNetworkHandler, minecraftClient) -> {
+			warpPointManager.savePoints();
+			warpPointManager = null;
+		});
 
 		AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
 		config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
@@ -95,7 +113,7 @@ public class AngleWarp implements ClientModInitializer {
 			if(activationProgress == currentlySnapped.warpTicks) {
 				player.sendMessage(Text.literal("Activated " + currentlySnapped.getDisplayName()), true);
 
-				WarpPoint postActionPoint = WarpPointManager.getPointById(currentlySnapped.postActionPointId);
+				WarpPoint postActionPoint = warpPointManager.getPointById(currentlySnapped.postActionPointId);
 
 				if(postActionPoint != null) {
 					snapToPointInstantly(player, postActionPoint);
@@ -121,7 +139,7 @@ public class AngleWarp implements ClientModInitializer {
 		float playerYaw = MathHelper.wrapDegrees(player.getYaw());
 		float playerPitch = MathHelper.wrapDegrees(player.getPitch());
 
-		for (WarpPoint point : WarpPointManager.points) {
+		for (WarpPoint point : warpPointManager.points) {
 			if(point != currentlySnapped) {
 				float distance = point.rotation.distanceSquared(playerPitch, playerYaw);
 

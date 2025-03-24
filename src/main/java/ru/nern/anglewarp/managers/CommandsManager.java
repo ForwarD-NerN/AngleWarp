@@ -27,11 +27,10 @@ import java.text.DecimalFormat;
 public class CommandsManager {
     private static final SimpleCommandExceptionType POINT_ALREADY_EXISTS = new SimpleCommandExceptionType(Text.literal("Warp point with this name already exists!"));
     private static final SimpleCommandExceptionType POINT_DOESNT_EXIST = new SimpleCommandExceptionType(Text.literal("Warp point with this name doesn't exist"));
-    private static final SimpleCommandExceptionType COLOR_NOT_FOUND = new SimpleCommandExceptionType(Text.literal("Can't find color with this name"));
     private static final SimpleCommandExceptionType CANT_SET_COLOR = new SimpleCommandExceptionType(Text.literal("Unable to set this color"));
 
     public static final SuggestionProvider<FabricClientCommandSource> POINTS_SUGGESTION_PROVIDER =
-            (context, builder) -> CommandSource.suggestMatching(WarpPointManager.points.stream().map(warpPoint -> warpPoint.id), builder);
+            (context, builder) -> CommandSource.suggestMatching(AngleWarp.warpPointManager.points.stream().map(warpPoint -> warpPoint.id), builder);
 
     public static final SuggestionProvider<FabricClientCommandSource> POINT_SHAPE_SUGGESTION_PROVIDER =
             (context, builder) -> {
@@ -74,7 +73,7 @@ public class CommandsManager {
                                         .then(ClientCommandManager.literal("2fa_point").then(ClientCommandManager.argument("2fa", StringArgumentType.string()).suggests(POINTS_SUGGESTION_PROVIDER).executes(context -> setPostActionPoint(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "2fa")))))
                                         .then(ClientCommandManager.literal("angles").then(ClientCommandManager.argument("angles", CRotationArgument.rotation()).suggests(ANGLE_SUGGESTION_PROVIDER).executes(context -> setPointAngles(context.getSource(), StringArgumentType.getString(context, "id"), CRotationArgument.getRotation(context, "angles")))))
                                         .then(ClientCommandManager.literal("color")
-                                                .then(ClientCommandManager.argument("hex", StringArgumentType.string()).executes(context -> setPointColor(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "hex"))))
+                                                .then(ClientCommandManager.literal("hex").then(ClientCommandManager.argument("hex", StringArgumentType.string()).executes(context -> setPointColor(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "hex")))))
                                                 .then(ClientCommandManager.argument("color_name", StringArgumentType.string()).suggests(COLORS_SUGGESTION_PROVIDER))
                                         )
                                 )
@@ -88,13 +87,13 @@ public class CommandsManager {
     private static int listPoints(FabricClientCommandSource source) {
         StringBuilder builder = new StringBuilder();
 
-        if(WarpPointManager.points.isEmpty()) {
+        if(AngleWarp.warpPointManager.points.isEmpty()) {
             source.sendFeedback(Text.literal("There are no warp points available."));
             return 1;
         }
 
-        builder.append("Available points("); builder.append(WarpPointManager.points.size()); builder.append("): ");
-        for(WarpPoint point : WarpPointManager.points) {
+        builder.append("Available points("); builder.append(AngleWarp.warpPointManager.points.size()); builder.append("): ");
+        for(WarpPoint point : AngleWarp.warpPointManager.points) {
             builder.append(String.format("\n* %s (%s). Rotation: (%.2f, %.2f), ticks: %d%s%s%s", point.getDisplayName(), point.id, point.rotation.x, point.rotation.y, point.warpTicks, point.hidden ? ", hidden" : "", !point.canSnap ? ", snapping disabled" : "", point.postActionPointId != null ? (", 2FA: " + point.postActionPointId) : ""));
         }
         source.sendFeedback(Text.literal(builder.toString()));
@@ -204,7 +203,7 @@ public class CommandsManager {
     private static int removePoint(FabricClientCommandSource source, String id) throws CommandSyntaxException {
         WarpPoint point = getPointByIdOrThrow(id);
 
-        if(WarpPointManager.points.remove(point)) {
+        if(AngleWarp.warpPointManager.points.remove(point)) {
             if(AngleWarp.currentlySnapped == point) {
                 AngleWarp.activationProgress = 0;
                 AngleWarp.currentlySnapped = null;
@@ -220,17 +219,17 @@ public class CommandsManager {
     private static int addPoint(FabricClientCommandSource source, String id, CCoordinates location, int warpDelay) throws CommandSyntaxException {
         final WarpPoint point = new WarpPoint(id, new RotationVector(location.getRotation(source)), WarpUtils.getRandomColor(), warpDelay);
 
-        for(WarpPoint existing : WarpPointManager.points) {
+        for(WarpPoint existing : AngleWarp.warpPointManager.points) {
             if(existing.id.equals(point.id)) throw POINT_ALREADY_EXISTS.create();
         }
 
-        WarpPointManager.points.add(point);
+        AngleWarp.warpPointManager.points.add(point);
         source.sendFeedback(Text.literal("The warp point '" + id + "' was successfully created"));
         return 1;
     }
 
     private static WarpPoint getPointByIdOrThrow(String id) throws CommandSyntaxException {
-        for(WarpPoint point : WarpPointManager.points) {
+        for(WarpPoint point : AngleWarp.warpPointManager.points) {
             if(point.id.equals(id)) return point;
         }
         throw POINT_DOESNT_EXIST.create();
