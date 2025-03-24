@@ -24,4 +24,4 @@ You can then configure another point to use the 2FA point by entering:
 ```/anglewarp configure <point_id> 2fa verification_point```
 
 <br><br><br>
-This mod was created before I became aware of [AngleSnap](https://github.com/KingContaria/anglesnap), the features of these two mods are more or less the same. However, there are things unique to this mod: the progress bar, automatic 2FA support, and the ability to hide/disable snapping on individual waypoints. AngleSnap has a GUI interface, while this mod is operated through client-side commands. This mod doesn't yet have custom icon support and split waypoints for each world.
+This mod was created before I found out about [AngleSnap](https://github.com/KingContaria/anglesnap), the features of these two mods are more or less the same. However, there are things unique to this mod: the progress bar, automatic 2FA support, and the ability to hide/disable snapping on individual waypoints. AngleSnap has a GUI interface, while this mod is operated through client-side commands. This mod doesn't yet have custom icon support and split waypoints for each world.
