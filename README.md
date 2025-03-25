@@ -1,6 +1,6 @@
 ## *Info*:
 
-**Angle Warp** is a client-side mod that helps aiming at certain points in space, by introducing a rotation-based waypoint system. [[Video Demo](https://www.youtube.com/watch?v=TOV1VCN-nPs)]
+**Angle Warp** is a client-side mod that helps aiming at certain points in space, by introducing a rotation-based waypoint system. [[Video Demo](https://www.youtube.com/watch?v=bi7FHElybMg)]
 
 The primary use-case of this mod is to help teleporting via [arrow deflection-based wireless redstone](https://www.youtube.com/watch?v=FnUE-ZaALLw).
 
@@ -17,11 +17,11 @@ New waypoints can be added with this command:
 
 
 ## *2FA*:
-To set up 2FA, first create a new point with the following command: ```/anglewarp add_point verification_point -56.01 -90.00```<br>
-If you want to make this point hidden for view, activate this command: ```/anglewarp configure verification_point hide true```
+To set up 2FA, first create a new point: ```/anglewarp add_point verification_point -56.01 -90.00```<br>
+If you want to make this point hidden for view: ```/anglewarp configure verification_point hide true```
 
-You can then configure another point to use the 2FA point by entering:
-```/anglewarp configure <point_id> 2fa verification_point```
+You can then configure another point to link with the 2FA point:
+```/anglewarp configure <point_id> 2fa_point verification_point```
 
-<br><br><br>
+
 This mod was created before I found out about [AngleSnap](https://github.com/KingContaria/anglesnap), the features of these two mods are more or less the same. However, there are things unique to this mod: the progress bar, automatic 2FA support, and the ability to hide/disable snapping on individual waypoints. AngleSnap has a GUI interface, while this mod is operated through client-side commands. This mod doesn't yet have custom icon support.
