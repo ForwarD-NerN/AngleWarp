@@ -23,5 +23,6 @@ If you want to make this point hidden for view: ```/anglewarp configure verifica
 You can then configure another point to link with the 2FA point:
 ```/anglewarp configure <point_id> 2fa_point verification_point```
 
+This mod requires Cloth Config to be installed for configuration.
 
 This mod was created before I found out about [AngleSnap](https://github.com/KingContaria/anglesnap), the features of these two mods are more or less the same. However, there are things unique to this mod: the progress bar, automatic 2FA support, and the ability to hide/disable snapping on individual waypoints. AngleSnap has a GUI interface, while this mod is operated through client-side commands. This mod doesn't yet have custom icon support.
