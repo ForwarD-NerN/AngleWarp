@@ -90,7 +90,7 @@ public class RenderManager {
 
     private static void renderWarpPoint(WarpPoint point, MatrixStack matrices, VertexConsumerProvider.Immediate provider, int textBackgroundColor) {
 
-        RenderSystem.disableDepthTest(); // So for some reason litematica messes up with depth testing and this is needed despite depth testing being disabled in the render layer.
+        RenderSystem.disableDepthTest(); // So, for some reason litematica messes up with the depth testing and this is needed, despite the depth testing being already disabled in the render layer
 
         matrices.push();
 

@@ -6,7 +6,10 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,10 @@ import ru.nern.anglewarp.managers.KeybindsManager;
 import ru.nern.anglewarp.managers.RenderManager;
 import ru.nern.anglewarp.managers.WarpPointManager;
 import ru.nern.anglewarp.model.WarpPoint;
+import ru.nern.anglewarp.model.WarpSoundEntry;
+import ru.nern.anglewarp.model.WarpSoundType;
+
+import java.util.Optional;
 
 public class AngleWarp implements ClientModInitializer {
 	public static final String MOD_ID = "anglewarp";
@@ -89,6 +96,14 @@ public class AngleWarp implements ClientModInitializer {
 		if(isOverlayEnabled) mouseLocked = true;
 	}
 
+	private static void playPointSound(ClientPlayerEntity player, WarpPoint point, WarpSoundType type) {
+		WarpSoundEntry soundEntry = point.getSoundEntry(type);
+		if(soundEntry == null) return;
+
+		Optional<SoundEvent> sound = Registries.SOUND_EVENT.getOptionalValue(Identifier.of(soundEntry.soundId()));
+		sound.ifPresent(soundEvent -> player.playSound(soundEvent, soundEntry.volume(), soundEntry.pitch()));
+	}
+
 
 	public void tickActivationProgress(ClientPlayerEntity player) {
 		if(currentlySnapped == null) return;
@@ -99,6 +114,7 @@ public class AngleWarp implements ClientModInitializer {
 		float distanceToSnapped = currentlySnapped.rotation.distanceSquared(playerPitch, playerYaw);
 
 		if(distanceToSnapped > config.snapping.snapDistance) {
+			playPointSound(player, currentlySnapped, WarpSoundType.UNSNAP);
 			currentlySnapped = null;
 			activationProgress = 0;
 			return;
@@ -107,8 +123,13 @@ public class AngleWarp implements ClientModInitializer {
 		if(distanceToSnapped <= config.activation.activationDistance) {
 			activationProgress++;
 
+			if(activationProgress == 1) {
+				playPointSound(player, currentlySnapped, WarpSoundType.ACTIVATION_START);
+			}
+
 			if(activationProgress == currentlySnapped.warpTicks) {
 				player.sendMessage(Text.literal("Activated " + currentlySnapped.getDisplayName()), true);
+				playPointSound(player, currentlySnapped, WarpSoundType.ACTIVATION_FINISH);
 
 				WarpPoint postActionPoint = warpPointManager.getPointById(currentlySnapped.postActionPointId);
 
@@ -158,10 +179,12 @@ public class AngleWarp implements ClientModInitializer {
 
 	public void snapToPoint(ClientPlayerEntity player, WarpPoint point) {
 		getSnapper().snapToPoint(player, point.rotation.y, point.rotation.x);
+		playPointSound(player, point, WarpSoundType.SNAP);
 	}
 
 	public void snapToPointInstantly(ClientPlayerEntity player, WarpPoint point) {
 		instantSnapper.snapToPoint(player, point.rotation.y, point.rotation.x);
+		playPointSound(player, point, WarpSoundType.SNAP);
 	}
 
 

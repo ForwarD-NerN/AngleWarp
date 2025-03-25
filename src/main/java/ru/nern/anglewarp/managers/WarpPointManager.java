@@ -128,7 +128,7 @@ public abstract class WarpPointManager {
 
         public Multiplayer(ServerInfo serverInfo) {
             String hash = SHA256.hashString(serverInfo.address, Charsets.UTF_8).toString();
-            String fileName = StringUtils.substring(hash, 0, 36) + ".json";
+            String fileName = StringUtils.substring(hash, 0, 36) + ".json"; // Take 36 characters to prevent making a file with a long name
 
             this.serverName = serverInfo.name;
             this.file = new File(FabricLoader.getInstance().getConfigDir().resolve("anglewarp_points").toString(), fileName);

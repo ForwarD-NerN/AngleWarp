@@ -23,7 +23,7 @@
 
   "text.autoconfig.anglewarp.option.rendering": "Rendering",
 
-  "text.autoconfig.anglewarp.option.rendering.warpPointDistance": "Warp Point Render Distance",
+  "text.autoconfig.anglewarp.option.rendering.warpPointDistance": "Warp Point Distance",
   "text.autoconfig.anglewarp.option.rendering.renderProgressBar": "Show Warping Progress Bar",
   "text.autoconfig.anglewarp.option.rendering.useMarkerColorForProgressBar": "Use Waypoint Color For Progress Bar"
 }

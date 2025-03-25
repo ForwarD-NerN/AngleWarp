@@ -1,38 +1,42 @@
 package ru.nern.anglewarp.managers;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.xpple.clientarguments.arguments.CCoordinates;
+import dev.xpple.clientarguments.arguments.CResourceLocationArgument;
 import dev.xpple.clientarguments.arguments.CRotationArgument;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import ru.nern.anglewarp.AngleWarp;
 import ru.nern.anglewarp.WarpUtils;
-import ru.nern.anglewarp.model.RotationVector;
-import ru.nern.anglewarp.model.WarpPoint;
-import ru.nern.anglewarp.model.WarpPointShape;
+import ru.nern.anglewarp.model.*;
 
 import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.IdentityHashMap;
 
 public class CommandsManager {
     private static final SimpleCommandExceptionType POINT_ALREADY_EXISTS = new SimpleCommandExceptionType(Text.literal("Warp point with this name already exists!"));
     private static final SimpleCommandExceptionType POINT_DOESNT_EXIST = new SimpleCommandExceptionType(Text.literal("Warp point with this name doesn't exist"));
     private static final SimpleCommandExceptionType CANT_SET_COLOR = new SimpleCommandExceptionType(Text.literal("Unable to set this color"));
+    private static final SimpleCommandExceptionType SHAPE_DOESNT_EXIST = new SimpleCommandExceptionType(Text.literal("This shape doesn't exist"));
+    private static final SimpleCommandExceptionType SOUND_TYPE_DOESNT_EXIST = new SimpleCommandExceptionType(Text.literal("This warp sound type doesn't exist"));
 
-    public static final SuggestionProvider<FabricClientCommandSource> POINTS_SUGGESTION_PROVIDER =
+    public static final SuggestionProvider<FabricClientCommandSource> POINTS =
             (context, builder) -> CommandSource.suggestMatching(AngleWarp.warpPointManager.points.stream().map(warpPoint -> warpPoint.id), builder);
 
-    public static final SuggestionProvider<FabricClientCommandSource> POINT_SHAPE_SUGGESTION_PROVIDER =
+    public static final SuggestionProvider<FabricClientCommandSource> SHAPES =
             (context, builder) -> {
                 for(WarpPointShape shape : WarpPointShape.values()) {
                     builder.suggest(shape.name().toLowerCase());
@@ -40,15 +44,26 @@ public class CommandsManager {
                 return builder.buildFuture();
             };
 
+    public static final SuggestionProvider<FabricClientCommandSource> AVAILABLE_SOUNDS_CLIENT =
+            (context, builder) -> CommandSource.suggestIdentifiers(context.getSource().getSoundIds(), builder);
 
-    public static final SuggestionProvider<FabricClientCommandSource> ANGLE_SUGGESTION_PROVIDER =
+    public static final SuggestionProvider<FabricClientCommandSource> SOUND_TYPES =
+            (context, builder) -> {
+                for(WarpSoundType type : WarpSoundType.values()) {
+                    builder.suggest(type.name().toLowerCase());
+                }
+                return builder.buildFuture();
+            };
+
+
+    public static final SuggestionProvider<FabricClientCommandSource> ANGLES =
             (context, builder) -> {
                 Vec2f rotation = context.getSource().getPlayer().getRotationClient();
                 DecimalFormat formatter = new DecimalFormat("00.00");
                 return CommandSource.suggestMatching(new String[]{formatter.format(MathHelper.wrapDegrees(rotation.y)) + " " + formatter.format(MathHelper.wrapDegrees(rotation.x))}, builder);
             };
 
-    public static final SuggestionProvider<FabricClientCommandSource> COLORS_SUGGESTION_PROVIDER =
+    public static final SuggestionProvider<FabricClientCommandSource> COLOR_NAMES =
             (context, builder) -> CommandSource.suggestMatching(WarpUtils.colors.keySet(), builder);
 
 
@@ -57,29 +72,37 @@ public class CommandsManager {
                 dispatcher.register(ClientCommandManager.literal("anglewarp")
                         .then(ClientCommandManager.literal("add_point")
                                 .then(ClientCommandManager.argument("id", StringArgumentType.string())
-                                        .then(ClientCommandManager.argument("angles", CRotationArgument.rotation()).suggests(ANGLE_SUGGESTION_PROVIDER)
+                                        .then(ClientCommandManager.argument("angles", CRotationArgument.rotation()).suggests(ANGLES)
                                                 .executes(context -> addPoint(context.getSource(), StringArgumentType.getString(context, "id"), CRotationArgument.getRotation(context, "angles"), 0))
                                                 .then(ClientCommandManager.argument("warp_ticks", IntegerArgumentType.integer()).executes(context -> addPoint(context.getSource(), StringArgumentType.getString(context, "id"), CRotationArgument.getRotation(context, "angles"), IntegerArgumentType.getInteger(context, "warp_ticks")))))
                                 ))
                         .then(ClientCommandManager.literal("remove_point")
-                                .then(ClientCommandManager.argument("id", StringArgumentType.string()).suggests(POINTS_SUGGESTION_PROVIDER).executes(context -> removePoint(context.getSource(), StringArgumentType.getString(context, "id")))))
+                                .then(ClientCommandManager.argument("id", StringArgumentType.string()).suggests(POINTS).executes(context -> removePoint(context.getSource(), StringArgumentType.getString(context, "id")))))
                         .then(ClientCommandManager.literal("configure")
-                                .then(ClientCommandManager.argument("id", StringArgumentType.string()).suggests(POINTS_SUGGESTION_PROVIDER)
+                                .then(ClientCommandManager.argument("id", StringArgumentType.string()).suggests(POINTS)
                                         .then(ClientCommandManager.literal("display_name").then(ClientCommandManager.argument("display_name", StringArgumentType.string()).executes(context -> setPointName(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "display_name")))))
-                                        .then(ClientCommandManager.literal("shape").then(ClientCommandManager.argument("shape_name", StringArgumentType.string()).suggests(POINT_SHAPE_SUGGESTION_PROVIDER).executes(context -> setPointShape(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "shape_name")))))
+                                        .then(ClientCommandManager.literal("shape").then(ClientCommandManager.argument("shape_name", StringArgumentType.string()).suggests(SHAPES).executes(context -> setPointShape(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "shape_name")))))
                                         .then(ClientCommandManager.literal("warp_delay").then(ClientCommandManager.argument("warp_delay", IntegerArgumentType.integer()).executes(context -> setPointWarpDelay(context.getSource(), StringArgumentType.getString(context, "id"), IntegerArgumentType.getInteger(context, "warp_delay")))))
                                         .then(ClientCommandManager.literal("snapping").then(ClientCommandManager.argument("snap", BoolArgumentType.bool()).executes(context -> setCanSnap(context.getSource(), StringArgumentType.getString(context, "id"), BoolArgumentType.getBool(context, "snap")))))
                                         .then(ClientCommandManager.literal("hide").then(ClientCommandManager.argument("hide", BoolArgumentType.bool()).executes(context -> setHidden(context.getSource(), StringArgumentType.getString(context, "id"), BoolArgumentType.getBool(context, "hide")))))
-                                        .then(ClientCommandManager.literal("2fa_point").then(ClientCommandManager.argument("2fa", StringArgumentType.string()).suggests(POINTS_SUGGESTION_PROVIDER).executes(context -> setPostActionPoint(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "2fa")))))
-                                        .then(ClientCommandManager.literal("angles").then(ClientCommandManager.argument("angles", CRotationArgument.rotation()).suggests(ANGLE_SUGGESTION_PROVIDER).executes(context -> setPointAngles(context.getSource(), StringArgumentType.getString(context, "id"), CRotationArgument.getRotation(context, "angles")))))
+                                        .then(ClientCommandManager.literal("2fa_point").then(ClientCommandManager.argument("2fa", StringArgumentType.string()).suggests(POINTS).executes(context -> setPostActionPoint(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "2fa")))))
+                                        .then(ClientCommandManager.literal("angles").then(ClientCommandManager.argument("angles", CRotationArgument.rotation()).suggests(ANGLES).executes(context -> setPointAngles(context.getSource(), StringArgumentType.getString(context, "id"), CRotationArgument.getRotation(context, "angles")))))
+                                        .then(ClientCommandManager.literal("sounds").then(ClientCommandManager.argument("sound_type", StringArgumentType.string()).suggests(SOUND_TYPES)
+                                                .then(ClientCommandManager.argument("sound", CResourceLocationArgument.id()).suggests(AVAILABLE_SOUNDS_CLIENT)
+                                                        .executes(context -> setPointSound(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "sound_type"), CResourceLocationArgument.getId(context, "sound"), 50, 0))
+                                                        .then(ClientCommandManager.argument("volume", FloatArgumentType.floatArg())
+                                                                .executes(context -> setPointSound(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "sound_type"), CResourceLocationArgument.getId(context, "sound"), FloatArgumentType.getFloat(context, "volume"), 0))
+                                                                .then(ClientCommandManager.argument("pitch",  FloatArgumentType.floatArg())
+                                                                        .executes(context -> setPointSound(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "sound_type"), CResourceLocationArgument.getId(context, "sound"), FloatArgumentType.getFloat(context, "volume"), FloatArgumentType.getFloat(context, "pitch"))))
+                                                        ))))
                                         .then(ClientCommandManager.literal("color")
                                                 .then(ClientCommandManager.literal("hex").then(ClientCommandManager.argument("hex", StringArgumentType.string()).executes(context -> setPointColor(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "hex")))))
-                                                .then(ClientCommandManager.argument("color_name", StringArgumentType.string()).suggests(COLORS_SUGGESTION_PROVIDER).executes(context -> setPointColor(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "color_name"))))
+                                                .then(ClientCommandManager.argument("color_name", StringArgumentType.string()).suggests(COLOR_NAMES).executes(context -> setPointColor(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "color_name"))))
                                         )
                                 )
                         )
                         .then(ClientCommandManager.literal("look")
-                                .then(ClientCommandManager.argument("id", StringArgumentType.string()).suggests(POINTS_SUGGESTION_PROVIDER).executes(context -> lookAtPoint(context.getSource(), StringArgumentType.getString(context, "id")))))
+                                .then(ClientCommandManager.argument("id", StringArgumentType.string()).suggests(POINTS).executes(context -> lookAtPoint(context.getSource(), StringArgumentType.getString(context, "id")))))
                         .then(ClientCommandManager.literal("list_points").executes(context -> listPoints(context.getSource())))
                 ));
     }
@@ -114,6 +137,21 @@ public class CommandsManager {
         return 1;
     }
 
+    private static int setPointSound(FabricClientCommandSource source, String id, String type, Identifier sound, float volume, float pitch) throws CommandSyntaxException {
+        WarpPoint point = getPointByIdOrThrow(id);
+        point.initializeSoundMap();
+
+        try {
+            WarpSoundType soundType = WarpSoundType.valueOf(type.toUpperCase());
+            point.setSoundEntry(soundType, new WarpSoundEntry(sound.toString(), volume, pitch));
+            source.sendFeedback(Text.literal(id + " " + type + " sound was set to " + sound));
+        }catch (IllegalArgumentException e) {
+            throw SOUND_TYPE_DOESNT_EXIST.create();
+        }
+
+        return 1;
+    }
+
 
     private static int setPointName(FabricClientCommandSource source, String id, String name) throws CommandSyntaxException {
         WarpPoint point = getPointByIdOrThrow(id);
@@ -125,11 +163,12 @@ public class CommandsManager {
 
     private static int setPointShape(FabricClientCommandSource source, String id, String shapeName) throws CommandSyntaxException {
         WarpPoint point = getPointByIdOrThrow(id);
-        WarpPointShape shape = WarpPointShape.valueOf(shapeName.toUpperCase());
 
-        if(shape != null) {
-            point.shape = shape;
+        try {
+            point.shape = WarpPointShape.valueOf(shapeName.toUpperCase());
             source.sendFeedback(Text.literal(id + " shape was set to " + shapeName));
+        }catch (IllegalArgumentException e) {
+            throw SHAPE_DOESNT_EXIST.create();
         }
 
         return 1;
